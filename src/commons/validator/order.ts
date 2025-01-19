@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { idSchema, pageSchema, pageSizeSchema, productSchema } from './schemas';
+import { dateSchema, idSchema, numberSchema, pageSchema, pageSizeSchema, productSchema } from './schemas';
 
 // Funções para retornar os esquemas de validação usando Zod
 const OrderValidator = {
@@ -8,20 +8,22 @@ const OrderValidator = {
       id: idSchema.optional(),
       page: pageSchema.optional(),
       pageSize: pageSizeSchema.optional(),
-      startDate: z.string().optional(),
-      endDate: z.string().optional(),
-    }),
+      startDate: dateSchema.optional(),
+      endDate: dateSchema.optional(),
+      order_id: numberSchema.optional(),
+      user_id: numberSchema.optional(),
+    }).strict(),
   }),
 
   create: z.object({
     body: z.object({
-      order_id: z.number(),
-      user_id: z.number(),
+      order_id: z.string(),
+      user_id: z.string(),
       name: z.string(),
       date: z.string(),
       product: productSchema,
-      total: z.number().optional(),
-    }),
+      total: z.string().optional(),
+    }).strict(),
   }),
 
   delete: z.object({

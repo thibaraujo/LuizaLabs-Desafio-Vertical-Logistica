@@ -2,11 +2,11 @@ import {
   IGetQuery as DefaultIGetQuery,
   IBackGroundResponse as DefaultIBackGroundResponse
 } from '../interfaces/base';
-import { IOrder, IOrderRaw } from '../interfaces/order';
+import { IOrder, IOrderListRaw, IOrderRaw } from '../interfaces/order';
 
 export type IGetQuery = DefaultIGetQuery
-export type IGetResponse = IOrder[]
-export type IGetByIdResponse = IOrder
+export type IGetResponse = IOrderListRaw[]
+export type IGetByIdResponse = IOrderListRaw
 export type ICreateBody = IOrderRaw
 export type ICreateResponse = IOrder
 export type ICreateFromFileResponse = DefaultIBackGroundResponse

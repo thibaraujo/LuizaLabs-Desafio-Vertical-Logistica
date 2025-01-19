@@ -10,4 +10,17 @@ export type IOrderRaw = {
   total?: number;
 }
 
+export type IOrderListRaw = {
+  user_id: number;
+  name: string;
+  orders: [
+    {
+      order_id: number;
+      date: string;
+      product: IProduct[];
+      total: number;
+    }
+  ]
+}
+
 export type IOrder = IObjectRaw & IOrderRaw;

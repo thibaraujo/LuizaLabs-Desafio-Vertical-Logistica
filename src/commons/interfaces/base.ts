@@ -4,6 +4,10 @@ export type IGetQuery = {
   page?: number
   pageSize?: number
   search?: string
+  order_id?: string
+  user_id?: string,
+  startDate?: string,
+  endDate?: string
 }
 
 export type IGetResponse<IRawData> = {
