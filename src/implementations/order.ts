@@ -61,7 +61,13 @@ class OrderServiceClass extends OrderServiceBase {
             $push: {
               order_id: "$_id.order_id",
               date: "$_id.date",
-              total: "$_id.total",
+              total: {
+                $reduce: {
+                  input: "$products",
+                  initialValue: 0,
+                  in: { $add: ["$$value", "$$this.value"] }
+                }
+              },
               products: "$products"
             }
           }
