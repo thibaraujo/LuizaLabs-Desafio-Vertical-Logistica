@@ -1,6 +1,7 @@
 import { Schema, model } from 'mongoose';
 import { Order } from '../classes/order';
 import database from '../services/database';
+import { IProduct } from '../commons/interfaces/product';
 
 const OrderSchema = new Schema({
   order_id: {
@@ -29,8 +30,25 @@ const OrderSchema = new Schema({
     }
   },
   product: {
-    type: Object,
-    required: true,
+    type: {
+      product_id: {
+        type: Number,
+        required: true,
+        set: (value: number | string) => {
+          if (typeof value === 'number') return value;
+          return parseInt(value.toString().replace(/^0+/, ''), 10);
+        }
+      },
+      value: {
+        type: Number,
+        required: true,
+        set: (value: number | string) => {
+          if (typeof value === 'number') return value;
+          return parseFloat(value.toString().replace(/^0+/, '').replace(/(\d+)(\d{2})$/, '$1.$2'));
+        }
+      }
+    },
+    required: true
   },
   total: {
     type: Number,
