@@ -5,9 +5,15 @@ import routes from './routes';
 import cors from 'cors';
 import { errorHandler } from './services/errorHandler';
 import database from './services/database';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJson from './swagger.json';
+
 
 //* EXPRESS
 const app: express.Express = express();
+
+//* SWAGGER
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJson));
 
 //* DATABASE
 function connectionMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
