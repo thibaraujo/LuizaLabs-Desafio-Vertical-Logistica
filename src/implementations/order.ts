@@ -5,6 +5,8 @@ import { CustomError } from '../services/errorHandler';
 import { pipeline, Readable, Transform } from "stream";
 import { promisify } from 'util';
 import { OrderTestCollectionModel } from '../models/orderTestCollection';
+import { transformStringToOrderJSON } from '../utils/orderService';
+import { OrderModel } from '../models/order';
 const pipelineAsync = promisify(pipeline); // callback -> promise
 
 
@@ -31,35 +33,36 @@ class OrderServiceClass extends OrderServiceBase {
     if (file.mimetype !== 'text/plain') throw new CustomError('Arquivo inválido. Enviar arquivo de formato .txt.', 400);
 
     const fileReadStream = Readable.from(file.buffer.toString().split('\n'));
+
     const txtToJsonTransformStream = new Transform({
       writableObjectMode: true,
       async transform(chunk, encoding, callback) {
-        const line = chunk.toString().split('\n')[0];
+        const txtLine = chunk.toString().split('\n')[0];
 
-        // Transformar `name: value` em `{name: value}`
-        const [key, value] = line.split(':');
-        const obj = { [key.trim()]: value?.trim() };
-        const jsonObj = JSON.stringify(obj);
+        if (!txtLine) {
+          callback();
+          return;
+        }
 
-        callback(null, jsonObj);
+        const orderObject = transformStringToOrderJSON(txtLine);
+        callback(null, JSON.stringify(orderObject));
       }
     });
+
     const asyncpersistJsonTransformStream = new Transform({
       writableObjectMode: true,
       async transform(chunk, encoding, callback) {
         const orderJson = JSON.parse(chunk.toString());
         const orderInstance = new Order(orderJson)
-        await OrderTestCollectionModel.create(orderInstance);
+        await OrderModel.create(orderInstance);
         callback();
       }
     });
-    // const fileWriteStream = createWriteStream('output.txt');
 
     pipelineAsync(
       fileReadStream,
       txtToJsonTransformStream,
       asyncpersistJsonTransformStream
-      // fileWriteStream
     );
 
     return {
