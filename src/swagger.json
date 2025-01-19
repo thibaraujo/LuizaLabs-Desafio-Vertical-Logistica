@@ -1,0 +1,162 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Essa API foi desenvolvida para o desafio da Vertical Logística do Luizalabs. Ela permite listar e buscar pedidos, além de cadastrar pedidos a partir de um arquivo .txt (processamento sob demanda).",
+        "version": "1.0.0",
+        "title": "API Desafio Vertical Logística - Luizalabs",
+        "contact": {
+            "email": "thiagobatistaaraujo06@gmail.com"
+        }
+    },
+    "host": "localhost:8000",
+    "basePath": "/api",
+    "tags": [
+        {
+            "name": "orders",
+            "description": "Operações relacionadas a pedidos"
+        }
+    ],
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/orders": {
+            "get": {
+                "tags": [
+                    "orders"
+                ],
+                "summary": "Listar e buscar pedidos",
+                "parameters": [
+                    {
+                        "name": "order_id",
+                        "in": "query",
+                        "type": "integer",
+                        "description": "ID do pedido"
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "type": "integer",
+                        "description": "ID do usuário"
+                    },
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "type": "string",
+                        "description": "Data de início",
+                        "format": "AAAA-MM-DD"
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "type": "string",
+                        "description": "Data de término",
+                        "format": "AAAA-MM-DD"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de pedidos por usuário",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Order"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/files": {
+            "post": {
+                "tags": [
+                    "orders"
+                ],
+                "summary": "Cadastrar pedidos a partir de arquivo",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "file",
+                        "type": "file",
+                        "description": "Arquivo contendo os pedidos. \nFormato .txt: |-userId--|--------------userName----------------------|-orderId-|-prodId--|---value---|-date--|\n [Clique aqui para acessar um exemplo](https://github.com/thibaraujo/LuizaLabs-Desafio-Vertical-Logistica/blob/main/challengeDescription/data_1.txt)",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "schema": {
+                            "$ref": "#/definitions/OrderUpload"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Order": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "orders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/OrderItem"
+                    }
+                }
+            }
+        },
+        "OrderItem": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "number"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Product"
+                    }
+                }
+            }
+        },
+        "Product": {
+            "type": "object",
+            "properties": {
+                "product_id": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "OrderUpload": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "Arquivo de tamanho X recebido com sucesso. Processamento em andamento."
+                },
+                "file": {
+                    "type": "string",
+                    "example": "data_1.txt"
+                }
+            }
+        }
+    }
+}
