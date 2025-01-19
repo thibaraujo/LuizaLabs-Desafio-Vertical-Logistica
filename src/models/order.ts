@@ -59,6 +59,7 @@ const OrderSchema = new Schema({
 database.setupSchema(OrderSchema);
 
 OrderSchema.index({ order_id: 1 });
+OrderSchema.index({ user_id: 1 });
 OrderSchema.index({ date: 1 });
 
 export const OrderModel = model<Order>('Order', OrderSchema);

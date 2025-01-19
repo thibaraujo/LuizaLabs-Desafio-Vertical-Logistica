@@ -14,7 +14,6 @@ router.post('/', validate(OrderValidator.create), OrderController.create);
 
 // Listagem e busca de pedidos
 router.get('/', validate(OrderValidator.get), (req, res, next) => {
-  if (req.query.id) return OrderController.read(req, res, next);
   return OrderController.list(req, res, next);
 });
 

@@ -4,9 +4,10 @@ import { IGetByIdResponse, ICreateBody, ICreateResponse } from '../commons/reque
 import { CustomError } from '../services/errorHandler';
 import { pipeline, Readable, Transform } from "stream";
 import { promisify } from 'util';
-import { OrderTestCollectionModel } from '../models/orderTestCollection';
 import { transformStringToOrderJSON } from '../utils/orderService';
 import { OrderModel } from '../models/order';
+import mongoose from 'mongoose';
+import { IOrder, IOrderListRaw } from '../commons/interfaces/order';
 const pipelineAsync = promisify(pipeline); // callback -> promise
 
 
@@ -18,7 +19,73 @@ class OrderServiceClass extends OrderServiceBase {
   }
 
   async get(query: IGetQuery): Promise<IGetResponse> {
-    throw new Error('Method not implemented.');
+    const { page, pageSize, order_id, user_id, startDate, endDate }: IGetQuery = query;
+
+    const mongoQuery: mongoose.FilterQuery<IOrder> = {};
+    if (order_id) mongoQuery.order_id = parseInt(order_id);
+    if (user_id) mongoQuery.user_id = parseInt(user_id);
+    if (startDate || endDate) {
+      mongoQuery.date = {};
+      if (startDate) mongoQuery.date.$gte = startDate;
+      if (endDate) mongoQuery.date.$lte = endDate;
+    }
+
+    const orders = await OrderModel.aggregate([
+      {
+        $match: mongoQuery
+      },
+      {
+        $group: {
+          _id: {
+            user_id: "$user_id",
+            order_id: "$order_id",
+            date: "$date",
+            name: "$name",
+          },
+          products: { $push: "$product" }
+        }
+      },
+      {
+        $project: {
+          "products._id": 0,
+        }
+      },
+      {
+        $group: {
+          _id: {
+            user_id: "$_id.user_id"
+          },
+          user_id: { $first: "$_id.user_id" },
+          name: { $first: "$_id.name" },
+          orders: {
+            $push: {
+              order_id: "$_id.order_id",
+              date: "$_id.date",
+              total: "$_id.total",
+              products: "$products"
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          user_id: 1,
+          name: 1,
+          orders: 1,
+        }
+      },
+      ...(page && pageSize ? [
+        {
+          $skip: (page - 1) * pageSize
+        },
+        {
+          $limit: pageSize
+        }
+      ] : [])
+    ]) as IOrderListRaw[];
+
+    return orders;
   }
 
   async getById(id: string): Promise<IGetByIdResponse> {
