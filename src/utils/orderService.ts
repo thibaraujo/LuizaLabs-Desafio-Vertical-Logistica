@@ -26,3 +26,17 @@ export function transformStringToOrderJSON(line: string): IOrder {
         date: extractField(fields.date),
     };
 }
+
+export function isValidOrder(order: any): boolean {
+    const requiredFields: (keyof IOrder)[] = ['user_id', 'name', 'order_id', 'product', 'date'];
+
+    // analisar se todos os campos obrigatórios estão presentes e são válidos
+    for (const field of requiredFields) {
+        if (!order[field]) return false;
+        if (typeof order[field] === 'string' && order[field].trim() === '') return false;
+        if (typeof order[field] === 'number' && isNaN(order[field])) return false;
+        if (order[field] === null || order[field] === undefined) return false
+    }
+
+    return true;
+}

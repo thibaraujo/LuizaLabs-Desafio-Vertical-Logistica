@@ -4,11 +4,11 @@ import { IGetByIdResponse, ICreateBody, ICreateResponse } from '../commons/reque
 import { CustomError } from '../services/errorHandler';
 import { pipeline, Readable, Transform } from "stream";
 import { promisify } from 'util';
-import { transformStringToOrderJSON } from '../utils/orderService';
+import { isValidOrder, transformStringToOrderJSON } from '../utils/orderService';
 import { OrderModel } from '../models/order';
 import mongoose from 'mongoose';
 import { IOrder, IOrderListRaw } from '../commons/interfaces/order';
-const pipelineAsync = promisify(pipeline); // callback -> promise
+const pipelinePromise = promisify(pipeline); // callback -> promise
 
 
 class OrderServiceClass extends OrderServiceBase {
@@ -103,7 +103,8 @@ class OrderServiceClass extends OrderServiceBase {
   }
 
   async createFromFile(file: Express.Multer.File): Promise<ICreateFromFileResponse> {
-    if (file.mimetype !== 'text/plain') throw new CustomError('Arquivo inválido. Enviar arquivo de formato .txt.', 400);
+    if (!file) throw new CustomError('É obrigatório subir um arquivo.', 400);
+    if (file?.mimetype !== 'text/plain') throw new CustomError('Arquivo inválido. Enviar arquivo de formato .txt.', 400);
 
     const fileReadStream = Readable.from(file.buffer.toString().split('\n'));
 
@@ -118,6 +119,12 @@ class OrderServiceClass extends OrderServiceBase {
         }
 
         const orderObject = transformStringToOrderJSON(txtLine);
+
+        if (!orderObject || !isValidOrder(orderObject)) {
+          callback();
+          return;
+        }
+
         callback(null, JSON.stringify(orderObject));
       }
     });
@@ -132,7 +139,7 @@ class OrderServiceClass extends OrderServiceBase {
       }
     });
 
-    pipelineAsync(
+    pipelinePromise(
       fileReadStream,
       txtToJsonTransformStream,
       asyncpersistJsonTransformStream
