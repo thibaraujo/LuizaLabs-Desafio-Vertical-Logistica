@@ -141,7 +141,7 @@ A outra razão pela modelagem em si é o fato da mesma permitir diferentes manip
 2. npm install
     ```sh
     npm install
-3. Configure as variáveis de ambiente no arquivo **.env**
+3. Configure as variáveis de ambiente no arquivo **.env**. Para facilitar os testes, foi criado um cluster no MongoDB atlas. Copie as variáveis de ambiente do **DockerFile** caso necessário
 4. Execute os testes **npm run test**
     ```sh
     npm run test
