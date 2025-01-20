@@ -21,7 +21,7 @@ export function transformStringToOrderJSON(line: string): IOrder {
         order_id: parseInt(extractField(fields.orderId)),
         product: {
             product_id: parseInt(extractField(fields.productId)),
-            value: parseFloat(extractField(fields.value)),
+            value: extractField(fields.value),
         },
         date: extractField(fields.date),
     };

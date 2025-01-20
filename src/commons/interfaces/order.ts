@@ -18,7 +18,7 @@ export type IOrderListRaw = {
       order_id: number;
       date: string;
       product: IProduct[];
-      total: number;
+      total: string;
     }
   ]
 }

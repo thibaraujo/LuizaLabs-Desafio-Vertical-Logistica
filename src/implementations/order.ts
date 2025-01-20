@@ -1,6 +1,5 @@
 import { Order } from '../classes/order';
 import { OrderServiceBase, IGetQuery, IGetResponse, ICreateFromFileResponse } from '../commons/requests/order';
-import { IGetByIdResponse, ICreateBody, ICreateResponse } from '../commons/requests/order';
 import { CustomError } from '../services/errorHandler';
 import { pipeline, Readable, Transform } from "stream";
 import { promisify } from 'util';
@@ -32,7 +31,7 @@ class OrderServiceClass extends OrderServiceBase {
 
     const orders = await OrderModel.aggregate([
       {
-        $match: mongoQuery
+        $match: mongoQuery,
       },
       {
         $group: {
@@ -43,35 +42,39 @@ class OrderServiceClass extends OrderServiceBase {
             name: "$name",
           },
           products: { $push: "$product" }
-        }
+        },
       },
       {
         $project: {
           "products._id": 0,
-        }
+        },
       },
       {
         $group: {
           _id: {
-            user_id: "$_id.user_id"
+            user_id: "$_id.user_id",
           },
           user_id: { $first: "$_id.user_id" },
           name: { $first: "$_id.name" },
           orders: {
             $push: {
               order_id: "$_id.order_id",
-              date: "$_id.date",
               total: {
-                $reduce: {
-                  input: "$products",
-                  initialValue: 0,
-                  in: { $add: ["$$value", "$$this.value"] }
-                }
+                $toString: {
+                  $reduce: {
+                    input: "$products",
+                    initialValue: 0,
+                    in: {
+                      $add: ["$$value", { $toDouble: "$$this.value" }],
+                    },
+                  },
+                },
               },
-              products: "$products"
-            }
-          }
-        }
+              date: "$_id.date",
+              products: "$products",
+            },
+          },
+        },
       },
       {
         $project: {
@@ -79,9 +82,10 @@ class OrderServiceClass extends OrderServiceBase {
           user_id: 1,
           name: 1,
           orders: 1,
-        }
-      }
+        },
+      },
     ]) as IOrderListRaw[];
+
 
     return orders;
   }
