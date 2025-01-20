@@ -1,6 +1,7 @@
 import request from 'supertest';
 import app from '../app';
 import path from 'path';
+import { OrderModel } from '../models/order';
 
 const orderStructure: {
     user_id: String,
@@ -39,7 +40,7 @@ const orderStructure: {
 // Teste para a rota POST /orders/files
 describe('POST /orders/files', () => {
     test('should upload a file and create orders', async () => {
-        const filePath = path.resolve(process.cwd(), 'challengeDescription/data_1.txt');
+        const filePath = path.resolve(process.cwd(), 'challengeDescription/successTest.txt');
 
         const response = await request(app)
             .post('/api/orders/files')
@@ -105,4 +106,8 @@ describe('GET /orders', () => {
         const response = await request(app).get('/api/orders').query({ order_id: 'invalid' });
         expect(response.status).toBe(400);
     });
+});
+
+afterAll(async () => {
+    await OrderModel.deleteMany({});
 });
