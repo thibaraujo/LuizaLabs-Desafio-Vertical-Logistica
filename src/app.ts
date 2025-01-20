@@ -19,7 +19,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJson));
 function connectionMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
   database.connect()
     .then(() => {
-      console.log('Database connected');
+      // console.log('Database connected');
       next();
     })
     .catch((error) => {

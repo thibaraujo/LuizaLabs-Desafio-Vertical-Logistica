@@ -9,8 +9,6 @@ const router = Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// Cadastro de pedido
-router.post('/', validate(OrderValidator.create), OrderController.create);
 
 // Listagem e busca de pedidos
 router.get('/', validate(OrderValidator.get), (req, res, next) => {

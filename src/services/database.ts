@@ -10,7 +10,6 @@ export default {
     const databaseName = stageArg || process.env.DATABASE_NAME;
     const host = process.env.DATABASE_HOST;
 
-    console.info('Connecting to database ' + databaseName + '...');
     const uri = `mongodb+srv://${user}:${password}@${host}/${databaseName}?retryWrites=true&w=majority`;
     try {
       return mongoose.connect(uri);

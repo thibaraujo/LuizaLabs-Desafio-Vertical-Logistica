@@ -13,7 +13,5 @@ export type ICreateFromFileResponse = DefaultIBackGroundResponse
 
 export abstract class OrderServiceBase {
   abstract get(query: IGetQuery): Promise<IGetResponse> //* GET /orders
-  abstract getById(id: string): Promise<IGetByIdResponse> //* GET /orders?id={id}
-  abstract create(data: ICreateBody): Promise<ICreateResponse> //* POST /orders
   abstract createFromFile(file: Express.Multer.File): Promise<ICreateFromFileResponse> //* POST /orders/files
 }
