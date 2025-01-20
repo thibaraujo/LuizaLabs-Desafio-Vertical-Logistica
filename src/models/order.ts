@@ -1,7 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { Order } from '../classes/order';
 import database from '../services/database';
-import { IProduct } from '../commons/interfaces/product';
 
 const OrderSchema = new Schema({
   order_id: {

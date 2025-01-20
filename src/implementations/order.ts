@@ -19,7 +19,7 @@ class OrderServiceClass extends OrderServiceBase {
   }
 
   async get(query: IGetQuery): Promise<IGetResponse> {
-    const { page, pageSize, order_id, user_id, startDate, endDate }: IGetQuery = query;
+    const { order_id, user_id, startDate, endDate }: IGetQuery = query;
 
     const mongoQuery: mongoose.FilterQuery<IOrder> = {};
     if (order_id) mongoQuery.order_id = parseInt(order_id);
@@ -80,26 +80,10 @@ class OrderServiceClass extends OrderServiceBase {
           name: 1,
           orders: 1,
         }
-      },
-      ...(page && pageSize ? [
-        {
-          $skip: (page - 1) * pageSize
-        },
-        {
-          $limit: pageSize
-        }
-      ] : [])
+      }
     ]) as IOrderListRaw[];
 
     return orders;
-  }
-
-  async getById(id: string): Promise<IGetByIdResponse> {
-    throw new Error('Method not implemented.');
-  }
-
-  async create(data: ICreateBody): Promise<ICreateResponse> {
-    throw new Error('Method not implemented.');
   }
 
   async createFromFile(file: Express.Multer.File): Promise<ICreateFromFileResponse> {
