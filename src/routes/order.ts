@@ -18,6 +18,6 @@ router.get('/', validate(OrderValidator.get), (req, res, next) => {
 });
 
 // Cadastro de pedidos a partir de arquivo
-router.post('/files', upload.single("file"), OrderController.createFromFile);
+router.post('/files', [validate(OrderValidator.uploadFile), upload.single("file")], OrderController.createFromFile);
 
 export default router;

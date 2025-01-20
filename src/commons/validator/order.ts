@@ -51,6 +51,12 @@ const OrderValidator = {
       id: idSchema
     }),
   }),
+
+  uploadFile: z.object({
+    body: z.object({
+      file: z.any(),
+    }).strict(),
+  }),
 };
 
 export default OrderValidator;
