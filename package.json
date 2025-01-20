@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "rimraf ./build && tsc && jest --maxWorkers=1 --db=test --verbose --detectOpenHandles",
-    "start": "node build/index.js",
+    "start": "node --experimental-report --report-on-fatalerror --report-uncaught-exception --report-directory=./reports build/index.js",
     "dev": "nodemon --exec ts-node src/index.ts",
     "build": "rimraf ./build && tsc",
     "start:build": "npm run build && node build/index.js",
