@@ -39,11 +39,11 @@ const OrderSchema = new Schema({
         }
       },
       value: {
-        type: Number,
+        type: String,
         required: true,
         set: (value: number | string) => {
-          if (typeof value === 'number') return value;
-          return parseFloat(value.toString().replace(/^0+/, '').replace(/(\d+)(\d{2})$/, '$1.$2'));
+          if (typeof value === 'number') return value.toString();
+          return value;
         }
       }
     },

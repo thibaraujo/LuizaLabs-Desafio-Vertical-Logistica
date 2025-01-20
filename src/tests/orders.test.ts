@@ -5,33 +5,33 @@ import { OrderModel } from '../models/order';
 import { isValidOrder } from '../utils/orderService';
 
 const orderStructure: {
-    user_id: String,
+    user_id: Number,
     name: String,
     orders: [
         {
-            order_id: String,
+            order_id: Number,
             date: String,
-            total: Number,
+            total: String,
             products: [
                 {
-                    product_id: String,
-                    value: Number,
+                    product_id: Number,
+                    value: String,
                 },
             ],
         },
     ]
 } = {
-    user_id: '',
+    user_id: 0,
     name: '',
     orders: [
         {
-            order_id: '',
+            order_id: 0,
             date: '',
-            total: 0,
+            total: '0',
             products: [
                 {
-                    product_id: '',
-                    value: 0,
+                    product_id: 0,
+                    value: '0',
                 },
             ],
         },
@@ -170,7 +170,10 @@ describe('isValidOrder', () => {
         user_id: '123',
         name: 'John Doe',
         order_id: 'order_001',
-        product: 'Widget',
+        product: {
+            product_id: '1',
+            value: '100',
+        },
         date: '2025-01-01',
     };
 
